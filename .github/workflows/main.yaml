@@ -7,7 +7,9 @@ name: Create and publish a Docker image
 
 on:
   push:
-    branches: ["release"]
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
 
 env:
   REGISTRY: ghcr.io
@@ -23,6 +25,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Set output tag name
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
+      - name: Check output
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.vars.outputs.tag }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -44,3 +57,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            FLUTTER_VERSION=${{ steps.vars.outputs.tag }}
