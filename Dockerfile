@@ -27,4 +27,9 @@ RUN git clone --depth=1  https://github.com/flutter/flutter.git -b ${FLUTTER_VER
 RUN echo >> /root/.profile 'export PATH="$PATH:/flutterbuilder/flutter/bin:/flutterbuilder/flutter/bin/cache/dart-sdk/bin:/root/.pub-cache/bin"'
 RUN bash -l -c 'flutter precache && flutter config --no-analytics'
 
-ENTRYPOINT [ "/bin/bash", "-l", "-c", "--" ]
+ENV PATH="$PATH:/flutterbuilder/flutter/bin:/flutterbuilder/flutter/bin/cache/dart-sdk/bin:/root/.pub-cache/bin"
+WORKDIR /root
+
+
+
+
